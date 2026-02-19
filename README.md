@@ -23,7 +23,7 @@ A fun and educational Python desktop application that lets you "design" a person
 
 | Light skin + blonde wavy hair          | Dark skin + curly red hair + muscular   | Albino + bald + violet eyes (mutant)   |
 |----------------------------------------|-----------------------------------------|----------------------------------------|
-| ![light blonde]([Screenshots/LightSkin_CurlyHair.png](https://github.com/TekFed/dna_simulator/blob/main/Screenshots/LightSkin_CurlyHair.png)) | ![dark curly](Screenshots\LightSkin_CurlyHair.png)     | ![albino mutant](Screenshots\straight_hair.png) |
+| ![light blonde](https://github.com/TekFed/dna_simulator/blob/main/Screenshots/LightSkin_CurlyHair.png) | ![dark curly](Screenshots\LightSkin_CurlyHair.png)     | ![albino mutant](Screenshots\straight_hair.png) |
 
 ## 🚀 Quick Start
 
