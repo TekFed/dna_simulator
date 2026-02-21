@@ -7,7 +7,9 @@ import random
 import tempfile
 import os
 
+# ────────────────────────────────────────────────
 # Trait maps
+# ────────────────────────────────────────────────
 eye_color_map = {
     'A': 'Hazel', 'C': 'Brown', 'D': 'Brown', 'E': 'Blue',
     'F': 'Green', 'G': 'Hazel', 'H': 'Brown', 'I': 'Blue',
@@ -83,7 +85,7 @@ body_build_map = {
 class DNASimulatorApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("DNA Trait Simulator - Collins Edition (Stable)")
+        self.root.title("DNA Trait Simulator - Collins Edition (Ultra Safe)")
         self.root.geometry("1080x740")
         self.root.minsize(1000, 650)
 
@@ -91,7 +93,7 @@ class DNASimulatorApp:
         self.last_traits = None
         self.current_photo = None
 
-        # Left panel (scrollable)
+        # Left panel
         self.left_frame = ttk.Frame(root, padding=12)
         self.left_frame.pack(side=tk.LEFT, fill=tk.Y, expand=False)
 
@@ -171,6 +173,7 @@ class DNASimulatorApp:
                 codon = self.codon_entries[trait_name].get()
                 traits[trait_name.replace(' ', '_')] = self.get_trait_from_codon(codon, trait_map)
 
+            # Show traits
             for lbl in self.trait_labels: lbl.destroy()  # noqa: E701
             self.trait_labels = []
             texts = [f"Gender: {gender}"]
@@ -200,16 +203,17 @@ class DNASimulatorApp:
         }
 
         hair_style_map = {
-            'Straight': TopType.LONG_HAIR_STRAIGHT if gender == "Female" else TopType.SHORT_HAIR_THE_CAESAR_SIDE_PART,
-            'Wavy': TopType.LONG_HAIR_CURVY if gender == "Female" else TopType.SHORT_HAIR_THE_CAESAR_SIDE_PART,
-            'Curly': TopType.LONG_HAIR_CURLY if gender == "Female" else TopType.SHORT_HAIR_CURLY,
-            'Bald': TopType.NO_HAIR
+            'Straight': TopType.LONG_HAIR_STRAIGHT if gender == "Female" else TopType.SHORT_HAIR_SHORT_ROUND,
+            'Wavy':    TopType.LONG_HAIR_CURVY     if gender == "Female" else TopType.SHORT_HAIR_SHORT_WAVED,
+            'Curly':   TopType.LONG_HAIR_CURLY     if gender == "Female" else TopType.SHORT_HAIR_DREADS_01,
+            'Bald':    TopType.NO_HAIR
         }
 
         mouth_map = {'Thin': MouthType.SERIOUS, 'Full': MouthType.SMILE, 'Pouty': MouthType.SMILE}
 
         clothe_type = ClotheType.HOODIE if traits['body_build'] in ['Slim', 'Average'] else ClotheType.BLAZER_SWEATER
 
+        # Create avatar
         avatar = PyAvataaar(
             style=AvatarStyle.CIRCLE,
             skin_color=SkinColor.LIGHT if traits['skin_tone'] in ['Light', 'Albino'] else
@@ -220,6 +224,9 @@ class DNASimulatorApp:
             mouth_type=mouth_map.get(traits['lip_fullness'], MouthType.SMILE),
             clothe_type=clothe_type
         )
+
+        # Save this avatar object for later use in save_avatar
+        self.last_avatar = avatar
 
         fd, tmp_path = tempfile.mkstemp(suffix=".png")
         os.close(fd)
@@ -239,25 +246,17 @@ class DNASimulatorApp:
         self.current_photo = photo
 
     def save_avatar(self):
-        if not self.last_gender or not self.last_traits:
+        if not hasattr(self, 'last_avatar') or not self.last_avatar:
+            messagebox.showwarning("Nothing to save", "Generate a person first!")
             return
+
         file_path = filedialog.asksaveasfilename(
             defaultextension=".png",
             filetypes=[("PNG files", "*.png")],
-            title="Save Avatar"
+            title="Save Your Avatar"
         )
         if file_path:
-            avatar = PyAvataaar(
-                style=AvatarStyle.CIRCLE,
-                skin_color=SkinColor.LIGHT if self.last_traits['skin_tone'] in ['Light', 'Albino'] else
-                          SkinColor.YELLOW if self.last_traits['skin_tone'] == 'Medium' else SkinColor.BROWN,
-                hair_color=HairColor.BLONDE if self.last_traits['hair_color'] == 'White' else HairColor.BLACK,
-                top_type=TopType.LONG_HAIR_STRAIGHT,
-                eye_type=EyesType.DEFAULT,
-                mouth_type=MouthType.SMILE,
-                clothe_type=ClotheType.HOODIE
-            )
-            avatar.render_png_file(file_path)
+            self.last_avatar.render_png_file(file_path)
             messagebox.showinfo("Saved ✓", f"Avatar saved successfully!\n{file_path}")
 
 if __name__ == "__main__":
